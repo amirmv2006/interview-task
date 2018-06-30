@@ -25,4 +25,9 @@ public class CarDaoInMemoryImpl
     public Car getCarById(final String carId) {
         return carIdMap.get(carId);
     }
+
+    @Override
+    public void removeCar(final String id) {
+        carIdMap.remove(id);
+    }
 }

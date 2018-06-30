@@ -7,4 +7,6 @@ public interface ICarDao {
     void save(Car car);
 
     Car getCarById(String carId);
+
+    void removeCar(String id);
 }

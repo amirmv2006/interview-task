@@ -8,17 +8,8 @@ import ir.amv.snippets.tbatask.board.Board;
 public class Car {
 
     private String id;
-    private Board board;
     private Integer x;
     private Integer y;
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public void setBoard(final Board board) {
-        this.board = board;
-    }
 
     public String getId() {
         return id;

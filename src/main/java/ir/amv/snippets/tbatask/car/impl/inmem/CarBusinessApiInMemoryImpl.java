@@ -30,7 +30,6 @@ public class CarBusinessApiInMemoryImpl
     public Car createCar(final Board currentBoard) {
         Car car = new Car();
         car.setId("c" + idGenerator.incrementAndGet());
-        car.setBoard(currentBoard);
         Random random = new Random();
         car.setX(random.nextInt(currentBoard.getWidth()));
         car.setY(random.nextInt(currentBoard.getHeight()));
@@ -41,5 +40,10 @@ public class CarBusinessApiInMemoryImpl
     @Override
     public Car getCarById(final String carId) {
         return carDao.getCarById(carId);
+    }
+
+    @Override
+    public void removeCar(final String id) {
+        carDao.removeCar(id);
     }
 }

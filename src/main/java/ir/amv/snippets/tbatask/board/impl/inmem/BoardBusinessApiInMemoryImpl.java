@@ -4,6 +4,7 @@ import ir.amv.snippets.tbatask.BaseException;
 import ir.amv.snippets.tbatask.board.Board;
 import ir.amv.snippets.tbatask.board.CarMoveType;
 import ir.amv.snippets.tbatask.board.IBoardBusinessApi;
+import ir.amv.snippets.tbatask.board.exc.InvalidCarMoveCommandException;
 import ir.amv.snippets.tbatask.board.impl.CarMoverThread;
 import ir.amv.snippets.tbatask.car.Car;
 import ir.amv.snippets.tbatask.car.ICarBusinessApi;
@@ -42,6 +43,8 @@ public class BoardBusinessApiInMemoryImpl
     private Integer defaultHeight;
     @Value("${board.default.cars.count}")
     private Integer defaultCarsCount;
+    @Value("${board.default.speed}")
+    private Integer defaultSpeed;
 
     private Board currentBoard;
     private ConcurrentMap<String, CarMoverThread> carMoverIdMap = new ConcurrentHashMap<>();
@@ -49,22 +52,14 @@ public class BoardBusinessApiInMemoryImpl
 
     @PostConstruct
     private void init() throws BaseException {
-        currentBoard = new Board();
-        currentBoard.setWidth(defaultWidth);
-        currentBoard.setHeight(defaultHeight);
-        currentBoard.setCars(new ArrayList<>());
-        Random random = new Random();
-        for (Integer i = 0; i < defaultCarsCount; i++) {
-            createCar();
-            int randomeMove = random.nextInt(CarMoveType.values().length);
-            moveCar(currentBoard.getCars().get(i).getId() + COMMAND_DELIMITER + CarMoveType.values()[randomeMove].getCommand());
-        }
+        initBoard(defaultWidth, defaultHeight, defaultCarsCount);
     }
 
     @Override
-    public Board createCar() {
+    public Board addCar(final String command) throws BaseException {
         Car car = carBusinessApi.createCar(currentBoard);
         currentBoard.getCars().add(car);
+        moveCar(car.getId() + COMMAND_DELIMITER + command);
         return currentBoard;
     }
 
@@ -74,13 +69,45 @@ public class BoardBusinessApiInMemoryImpl
         String carId = tokenizer.nextToken();
         Car car = carBusinessApi.getCarById(carId);
         String moveCommand = tokenizer.nextToken();
-        CarMoveType carMoveType = CarMoveType.fromCommand(moveCommand);
+        CarMoveType carMoveType = CarMoveType.fromCommand(moveCommand.toUpperCase());
         CarMoverThread carMoverThread = carMoverIdMap.get(carId);
         if (carMoverThread == null) {
             carMoverThread = applicationContext.getBean(CarMoverThread.class);
             carMoverIdMap.put(carId, carMoverThread);
         }
-        carMoverThread.moveCar(currentBoard, car, carMoveType);
+        Integer speed = defaultSpeed;
+        if (tokenizer.hasMoreTokens()) {
+            try {
+                speed = Integer.valueOf(tokenizer.nextToken());
+            } catch (NumberFormatException e) {
+                throw new BaseException("Invalid Speed", e);
+            }
+        }
+        carMoverThread.moveCar(currentBoard, car, carMoveType, speed);
+        return currentBoard;
+    }
+
+    @Override
+    public Board getCurrentBoard() {
+        return currentBoard;
+    }
+
+    @Override
+    public Board initBoard(final Integer width, final Integer height, final Integer carCount) throws BaseException {
+        carMoverIdMap.forEach((s, carMoverThread) -> {
+            carBusinessApi.removeCar(carMoverThread.getCar().getId());
+            carMoverThread.kill();
+        });
+        carMoverIdMap.clear();
+        currentBoard = new Board();
+        currentBoard.setWidth(width);
+        currentBoard.setHeight(height);
+        currentBoard.setCars(new ArrayList<>());
+        Random random = new Random();
+        for (Integer i = 0; i < carCount; i++) {
+            int randomeMove = random.nextInt(CarMoveType.values().length);
+            addCar(CarMoveType.values()[randomeMove].getCommand());
+        }
         return currentBoard;
     }
 

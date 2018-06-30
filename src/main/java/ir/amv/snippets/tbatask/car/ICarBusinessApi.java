@@ -10,4 +10,6 @@ public interface ICarBusinessApi {
     Car createCar(Board currentBoard);
 
     Car getCarById(String carId);
+
+    void removeCar(String id);
 }

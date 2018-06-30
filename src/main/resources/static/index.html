@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="board.js"/>
+    <script>
+    </script>
+</head>
+<body>
+
+<svg id="canvas" width="100%" height="400">
+</svg>
+
+<label>Car Count:</label><input id="carCount"/><button id="initBoard">UpdateBoard</button><br>
+<label>Command</label><input id="command"/><button id="sendCommand">Update Car</button><button id="addCar">Add
+    Car</button>
+<script>
+    $( document ).ready(function() {
+        $("#initBoard").click(function () {
+            var w = Math.round($("#canvas").width()) - 25;
+            console.log("width:" + w);
+            var h = Math.round($("#canvas").height()) - 25;
+            console.log("height:" + h);
+            var cnt = $("#carCount").val();
+            $.post( "rest/board?width=" + w + "&height=" + h + "&count=" + cnt, function( data ) {
+                updateBoard(data);
+            });
+        });
+        setInterval(function () {
+            $.get("rest/board", function (data) {
+                updateBoard(data)
+            })
+        }, 1000);
+        $("#sendCommand").click(function () {
+            var command = $("#command").val();
+            $.post("rest/board/moveCar?command=" + command, function (data) {
+                updateBoard(data);
+            }).fail(function(xhr, status, error,exc) {
+                alert("Error: " + xhr.responseJSON.message);
+            });
+        });
+        $("#addCar").click(function () {
+            var command = $("#command").val();
+            $.post("rest/board/addCar?command=" + command, function (data) {
+                updateBoard(data);
+            }).fail(function(xhr, status, error,exc) {
+                alert("Error: " + xhr.responseJSON.message);
+            });
+        });
+    });
+</script>
+</body>
+</html>
