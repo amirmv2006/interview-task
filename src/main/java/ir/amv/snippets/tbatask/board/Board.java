@@ -5,6 +5,7 @@ import ir.amv.snippets.tbatask.car.Car;
 import java.util.List;
 
 /**
+ * the Board model.
  * @author Amir
  */
 public class Board {

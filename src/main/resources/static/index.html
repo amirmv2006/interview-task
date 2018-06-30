@@ -11,7 +11,11 @@
 <svg id="canvas" width="100%" height="400">
 </svg>
 
-<label>Car Count:</label><input id="carCount"/><button id="initBoard">UpdateBoard</button><br>
+<label>Car Count:</label><input id="carCount"/><button id="initBoard">Init Board</button><br>
+<p>Here you can update a Car or add a new one. The command is a comma separated value representing what you want
+to do. for update the command is 'CAR_ID,MOVE_CHAR[,SPEED] where MOVE_CHAR is 'u' for Up, 'd' for Dowm, 'l' for
+    Left, and 'r' for Right. SPEED is an optional integer. In order to Add, you use the same command without
+    CARD_ID meaning the command would be MOVE_CHAR[,SPEED]</p><br>
 <label>Command</label><input id="command"/><button id="sendCommand">Update Car</button><button id="addCar">Add
     Car</button>
 <script>

@@ -1,18 +1,22 @@
 package ir.amv.snippets.tbatask;
 
-import ir.amv.snippets.tbatask.board.IBoardRestService;
-import ir.amv.snippets.tbatask.board.impl.BoardRestServiceImpl;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.ApplicationPath;
+import java.util.List;
 
+/**
+ * Jersey configuration.
+ */
 @Component
 @ApplicationPath("/rest")
 public class JerseyConfig extends ResourceConfig
 {
-    public JerseyConfig()
+    @Autowired
+    public JerseyConfig(List<IBaseRestService> restServices)
     {
-        register(BoardRestServiceImpl.class);
+        restServices.forEach(this::register);
     }
 }

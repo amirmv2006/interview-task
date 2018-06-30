@@ -3,6 +3,7 @@ package ir.amv.snippets.tbatask.car;
 import ir.amv.snippets.tbatask.board.Board;
 
 /**
+ * the car model.
  * @author Amir
  */
 public class Car {

@@ -1,20 +1,18 @@
 package ir.amv.snippets.tbatask;
 
-import org.glassfish.jersey.servlet.ServletContainer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-
+/**
+ * application configuration.
+ */
 @SpringBootApplication
 public class TbaTaskApplication {
 
+	/**
+	 * profile used for in-memory implementation. if we decide to keep data in another repository we can introduce a
+	 * new profile and new implementation for those beans which are using this profile.
+	 */
 	public static final String IN_MEMORY_PROFILE = "in-memory";
 
 	public static void main(String[] args) throws InterruptedException {
